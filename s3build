@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Simple script to create a new s3 account and associed credentials.
+# Use the aws utility.
+
+set -e
+
+bucket_name=$(uuidgen --time)
+bucket_user=$(uuidgen --time)
+
+printf "Creating user '${bucket_user}'... "
+json_ouput=$(aws iam create-user --user-name $bucket_user)
+echo "done."
+
+printf "Creating new access and secret key... "
+json_output=$(aws iam create-access-key --user-name $bucket_user)
+access_id=$(echo $json_output | jq --raw-output '.AccessKey.AccessKeyId')
+secret_key=$(echo $json_output | jq --raw-output '.AccessKey.SecretAccessKey')
+echo "done."
+
+printf "Creating new bucket... "
+bucket_url="s3://${bucket_name}"
+json_ouput=$(aws s3 mb $bucket_url)
+echo "done."
+
+printf "Generating user policy... "
+policy_json_path="/tmp/${bucket_user}.json"
+cat << EOF > $policy_json_path
+{
+  "Statement": [
+    {
+      "Action": "s3:*",
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::${bucket_name}",
+        "arn:aws:s3:::${bucket_name}/*"
+      ]
+    }
+  ]
+}
+EOF
+json_ouput=$(aws iam put-user-policy --user-name $bucket_user --policy-name s3build --policy-document file://$policy_json_path)
+echo "done."
+
+echo ""
+echo "URL: ${bucket_url}"
+echo "Access Key: ${access_id}"
+echo "Secret Key: ${secret_key}"
+echo ""
