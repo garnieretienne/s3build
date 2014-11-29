@@ -19,6 +19,7 @@ secret_key=$(echo $json_output | jq --raw-output '.AccessKey.SecretAccessKey')
 echo "done."
 
 printf "Creating new bucket... "
+bucket_full_url="s3://${access_id}:${secret_key}@${bucket_name}"
 bucket_url="s3://${bucket_name}"
 json_ouput=$(aws s3 mb $bucket_url)
 echo "done."
@@ -43,7 +44,5 @@ json_ouput=$(aws iam put-user-policy --user-name $bucket_user --policy-name s3bu
 echo "done."
 
 echo ""
-echo "URL: ${bucket_url}"
-echo "Access Key: ${access_id}"
-echo "Secret Key: ${secret_key}"
+echo "URL: ${bucket_full_url}"
 echo ""
