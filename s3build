@@ -7,6 +7,7 @@ set -e
 
 bucket_name=$(uuidgen --time)
 bucket_user=$(uuidgen --time)
+bucket_region="us-east-1"
 
 printf "Creating user '${bucket_user}'... "
 json_ouput=$(aws iam create-user --user-name $bucket_user)
@@ -19,9 +20,8 @@ secret_key=$(echo $json_output | jq --raw-output '.AccessKey.SecretAccessKey')
 echo "done."
 
 printf "Creating new bucket... "
-bucket_full_url="s3://${access_id}:${secret_key}@${bucket_name}"
 bucket_url="s3://${bucket_name}"
-json_ouput=$(aws s3 mb $bucket_url)
+json_ouput=$(aws s3 mb --region $bucket_region $bucket_url)
 echo "done."
 
 printf "Generating user policy... "
@@ -44,5 +44,7 @@ json_ouput=$(aws iam put-user-policy --user-name $bucket_user --policy-name s3bu
 echo "done."
 
 echo ""
-echo "URL: ${bucket_full_url}"
+echo "              Bucket URL: ${bucket_url}"
+echo "    Amazon Access Key ID: ${access_id}"
+echo "Amazon Secret Access Key: ${secret_key}"
 echo ""

@@ -15,11 +15,13 @@ It use the aws command to create amazon services resources and jq utility to par
 
 ```
 $> ./s3build
-Creating user 'XXXXXXXXXXXXXXXXXXXXXX'... done.
+Creating user 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'... done.
 Creating new access and secret key... done.
 Creating new bucket... done.
 Generating user policy... done.
 
-URL: s3://AWS_ACCESS_KEY_ID:AWS_SECRET_ACCESS_KEY@S3_BUCKET
+                  Bucket: s3://XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    Amazon Access Key ID: XXXXXXXXXXXXXXXXXXXX
+Amazon Secret Access Key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ```
